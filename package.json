@@ -1,6 +1,6 @@
 {
   "name": "@eureka7366/lumiterra-cli",
-  "version": "0.1.3",
+  "version": "0.1.0",
   "description": "Lumiterra game CLI for AI Agent automation",
   "license": "Apache-2.0",
   "author": "LumiterraGame",
