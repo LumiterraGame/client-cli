@@ -1,7 +1,7 @@
 import { describe, it, before, after, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { sendCommand } from "../src/client.js";
+import { discoveryCandidateHosts, sendCommand } from "../src/client.js";
 
 const DISCOVERY_START_PORT = 24366;
 
@@ -157,6 +157,10 @@ describe("client", () => {
     assert.deepEqual(second.requests, []);
   });
 
+  it("includes the legacy game CLI port as the final default discovery fallback", () => {
+    assert.equal(discoveryCandidateHosts().at(-1), "http://127.0.0.1:7860");
+  });
+
   it("does not send the command when discovery finds no Lumiterra server", async () => {
     const fakes = [];
     for (let i = 0; i < 10; i++) {
@@ -166,13 +170,43 @@ describe("client", () => {
       }));
     }
 
-    const result = await sendCommand("query-status");
+    const result = await sendCommand("query-status", {}, {
+      discoveryHosts: discoveryHostsFor(fakes),
+    });
 
     assert.equal(result.success, false);
     assert.ok(result.errors[0].includes("Unable to connect to the game"));
     for (const fake of fakes) {
       assert.deepEqual(fake.requests.map((request) => request.cmd), ["query-app-info"]);
     }
+  });
+
+  it("falls back to the legacy game CLI port after scanning the default range", async () => {
+    const fakes = [];
+    for (let i = 0; i < 10; i++) {
+      fakes.push(await listenDiscoveryServer(DISCOVERY_START_PORT + i, {
+        lumiterra: false,
+        level: 10 + i,
+      }));
+    }
+    const legacy = await listenDiscoveryServer(0, {
+      lumiterra: true,
+      level: 78,
+    });
+
+    const result = await sendCommand("query-status", {}, {
+      discoveryHosts: discoveryHostsFor([...fakes, legacy]),
+    });
+
+    assert.equal(result.success, true);
+    assert.equal(result.data.level, 78);
+    for (const fake of fakes) {
+      assert.deepEqual(fake.requests.map((request) => request.cmd), ["query-app-info"]);
+    }
+    assert.deepEqual(
+      legacy.requests.map((request) => request.cmd),
+      ["query-app-info", "query-status"],
+    );
   });
 
   it("does not scan when LUMITERRA_HOST is set", async () => {
@@ -253,6 +287,12 @@ describe("client", () => {
     const entry = { server: testServer, requests };
     discoveryServers.push(entry);
     return entry;
+  }
+
+  function discoveryHostsFor(entries) {
+    return entries.map((entry) => {
+      return `http://127.0.0.1:${entry.server.address().port}`;
+    });
   }
 
   async function closeServer(serverToClose) {

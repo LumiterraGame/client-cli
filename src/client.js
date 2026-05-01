@@ -3,6 +3,7 @@ import { request as httpsRequest } from "node:https";
 
 const DEFAULT_PORT = 24366;
 const DISCOVERY_PORT_COUNT = 10;
+const LEGACY_DISCOVERY_PORT = 7860;
 const DEFAULT_HOST = `http://127.0.0.1:${DEFAULT_PORT}`;
 const DEFAULT_TIMEOUT = 600000; // 10 minutes
 const DEFAULT_CONNECT_TIMEOUT = 1500;
@@ -44,10 +45,15 @@ function explicitCandidateHosts(host) {
   return [...new Set(loopbackHostsFor(normalized).map(normalizeHost))];
 }
 
-function discoveryCandidateHosts() {
-  return Array.from({ length: DISCOVERY_PORT_COUNT }, (_, index) => {
+export function discoveryCandidateHosts() {
+  const defaultHosts = Array.from({ length: DISCOVERY_PORT_COUNT }, (_, index) => {
     return `http://127.0.0.1:${DEFAULT_PORT + index}`;
   });
+
+  return [
+    ...defaultHosts,
+    `http://127.0.0.1:${LEGACY_DISCOVERY_PORT}`,
+  ];
 }
 
 function describeConnectionError(err) {
@@ -179,12 +185,12 @@ function isLumiterraAppInfo(response) {
     && typeof response.data.unityVersion === "string";
 }
 
-async function discoverDefaultHost(signal) {
+async function discoverDefaultHost(signal, candidateHosts = discoveryCandidateHosts()) {
   const body = JSON.stringify({ cmd: "query-app-info", params: {} });
   const triedHosts = [];
   let lastConnectionError = null;
 
-  for (const candidate of discoveryCandidateHosts()) {
+  for (const candidate of candidateHosts) {
     triedHosts.push(candidate);
     try {
       const response = await postCommand(candidate, body, signal, {
@@ -208,7 +214,7 @@ async function discoverDefaultHost(signal) {
  * Sends a command to the game HTTP server.
  * @param {string} cmd Command name.
  * @param {object} params Parameters.
- * @param {object} options { host, timeout, abortController }
+ * @param {object} options { host, timeout, abortController, discoveryHosts }
  * @returns {Promise<object>} Parsed JSON response.
  */
 export async function sendCommand(cmd, params = {}, options = {}) {
@@ -226,7 +232,7 @@ export async function sendCommand(cmd, params = {}, options = {}) {
 
   try {
     if (!hasExplicitHost) {
-      const discovered = await discoverDefaultHost(controller.signal);
+      const discovered = await discoverDefaultHost(controller.signal, options.discoveryHosts);
       triedHosts.push(...discovered.triedHosts);
       lastConnectionError = discovered.lastConnectionError;
 

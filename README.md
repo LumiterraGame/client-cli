@@ -11,8 +11,8 @@ must expose the compatible local command bridge.
 
 - Node.js 18 or newer.
 - A compatible Lumiterra game runtime running locally.
-- The local runtime must listen on one port in `127.0.0.1:24366-24375`, unless
-  you set `LUMITERRA_HOST`.
+- The local runtime must listen on one port in `127.0.0.1:24366-24375`, or the
+  legacy game CLI port `127.0.0.1:7860`, unless you set `LUMITERRA_HOST`.
 
 ## Installation
 
@@ -47,8 +47,8 @@ All commands return JSON using this general shape:
 
 ## Configuration
 
-By default, the CLI scans `127.0.0.1:24366-24375` and uses the lowest available
-Lumiterra runtime.
+By default, the CLI scans `127.0.0.1:24366-24375`, then the legacy game CLI port
+`127.0.0.1:7860`, and uses the first available Lumiterra runtime.
 
 Use `LUMITERRA_HOST` to target a specific runtime:
 

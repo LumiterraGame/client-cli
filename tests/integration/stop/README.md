@@ -5,7 +5,7 @@ under a stop signal, and that `drained: true` is returned.
 
 ## Preconditions
 
-1. **The game client must be running** (local runtime or build artifact), listening on one port in `localhost:24366-24375`.
+1. **The game client must be running** (local runtime or build artifact), listening on one port in `localhost:24366-24375` or legacy `localhost:7860`.
 2. The character is logged in, alive, and not inside a dungeon.
 3. It is recommended that the character be near the novice village center (each test's navigate target is based on this).
 4. Run tests serially; do not run them concurrently.

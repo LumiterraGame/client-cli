@@ -27,7 +27,7 @@ This CLI wraps the available game operations as scriptable commands so agents ca
 ## Prerequisites
 
 
-- Lumiterra game running (HTTP server auto-discovered on localhost:24366-24375).
+- Lumiterra game running (HTTP server auto-discovered on localhost:24366-24375, then legacy 7860).
 - `lumiterra` CLI installed. If missing, run `./scripts/install-cli.sh`.
 
 ## Hard Rules - MUST read every task

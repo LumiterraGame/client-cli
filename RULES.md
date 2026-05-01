@@ -17,7 +17,7 @@ Human / AI Agent
     | shell: lumiterra quest-list --type daily
     v
 Node.js CLI (this repository)  <- pure pipeline: args -> local command bridge -> stdout JSON
-    | local command bridge (localhost:24366-24375)
+    | local command bridge (localhost:24366-24375, legacy fallback 7860)
     v
 Game runtime                   <- companion game runtime repository
 ```
@@ -53,7 +53,7 @@ bash tests/integration/test-all-commands.sh
 ```text
 bin/lumiterra.js       # CLI entry point (#!/usr/bin/env node)
 src/parser.js          # argv -> {cmd, params, pretty, help}
-src/client.js          # local command bridge wrapper (auto-discovers localhost:24366-24375)
+src/client.js          # local command bridge wrapper (auto-discovers localhost:24366-24375, then legacy 7860)
 src/formatter.js       # JSON -> stdout + exitCode
 skills/                # Agent Skill files (teach AI agents how to use commands)
 tests/                 # unit tests + integration tests
@@ -144,7 +144,7 @@ Game runtime IDs such as soil id (`ulong`, max 2^64), animal entity id (`long`, 
 
 - Commands pass data by return values; ids and target locations returned by `quest-list` become parameters for later commands.
 - The game runtime uses async execution plus `CancellationToken` for timeouts and death interruption.
-- The local command bridge listens from port 24366 by default and tries up to 24375. When `LUMITERRA_HOST` is not set, the CLI scans that range and chooses the lowest available Lumiterra instance. Multi-instance or custom-port setups can override this with `LUMITERRA_HOST`.
+- The local command bridge listens from port 24366 by default and tries up to 24375. When `LUMITERRA_HOST` is not set, the CLI scans that range first, then temporarily falls back to the legacy game CLI port 7860, and chooses the first available Lumiterra instance. Multi-instance or custom-port setups can override this with `LUMITERRA_HOST`.
 
 ## Related Repository
 

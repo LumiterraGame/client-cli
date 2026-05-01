@@ -5,7 +5,7 @@
 
 ## One-Minute Start
 
-`lumiterra` is a CLI for controlling a Lumiterra GameFi MMORPG character. The local game must be running and listening on one port in `24366-24375`; the CLI auto-discovers the lowest available Lumiterra instance.
+`lumiterra` is a CLI for controlling a Lumiterra GameFi MMORPG character. The local game must be running and listening on one port in `24366-24375`, or the legacy game CLI port `7860`; the CLI auto-discovers the first available Lumiterra instance.
 
 ```bash
 ./skills/lumiterra/scripts/install-cli.sh    # agent auto-install script
