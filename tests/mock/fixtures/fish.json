@@ -1,0 +1,6 @@
+{
+  "success": true,
+  "data": { "fishCid": 12001, "quality": "normal" },
+  "earnings": { "items": [{ "cid": 12001, "count": 1 }] },
+  "errors": []
+}

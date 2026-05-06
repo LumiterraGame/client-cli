@@ -1,0 +1,6 @@
+{
+  "success": true,
+  "data": { "soilId": "99999999", "status": "growing", "nextOpTime": 9999999999 },
+  "earnings": null,
+  "errors": []
+}

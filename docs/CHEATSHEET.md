@@ -172,3 +172,11 @@ lumiterra query-status                        # test connectivity
 - **Add/change an Earn workflow** -> edit the matching `skills/lumiterra/references/earn-workflows/*.md`.
 - **Add/change a base workflow** -> edit the matching `skills/lumiterra/references/base-workflows/*.md`.
 - **Add/change a hard rule / pitfall** -> edit `SKILL.md` directly; hard rules and 64-bit ID pitfalls live inline there, not in split files.
+
+## Automated Tests
+
+| Command | Purpose |
+|---|---|
+| `npm test` | Unit tests (parser / client), no game required |
+| `npm run test:mock` | Structural mock tests, no game required |
+| Tell the agent "run auto-test skill" | Full command coverage (requires live game), Phase 1 -> 2 -> 3 |

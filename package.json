@@ -29,6 +29,9 @@
   "scripts": {
     "prepublishOnly": "npm test",
     "test": "node --test tests/*.test.js",
+    "test:mock": "node tests/mock/runner.js",
+    "test:mock:error": "MOCK_SCENARIO=command_error node tests/mock/runner.js",
+    "test:mock:disconnected": "MOCK_SCENARIO=disconnected node tests/mock/runner.js",
     "test:integration": "node --test tests/integration/**/*.test.js",
     "test:integration:stop": "node --test tests/integration/stop/*.test.js",
     "link": "npm link"
